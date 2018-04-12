@@ -5,20 +5,22 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDzUserGroupsTable extends Migration {
+class CreateDzRoutesTable extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
     public function up () {
-        Schema::create('dz_user_groups', function (Blueprint $table) {
+        Schema::create('dz_routes', function (Blueprint $table) {
             $userTable = ( new User() )->getTable();
 
             $table->increments('id');
 
-            $table->string('name');
-            $table->string('description')->nullable();
+            $table->string('uri');
+            $table->string('method');
+
+            $table->string('route_hash');
 
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
@@ -28,6 +30,8 @@ class CreateDzUserGroupsTable extends Migration {
 
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('route_hash');
         });
     }
 
@@ -37,6 +41,6 @@ class CreateDzUserGroupsTable extends Migration {
      * @return void
      */
     public function down () {
-        Schema::dropIfExists('dz_user_groups');
+        Schema::dropIfExists('dz_routes');
     }
 }
