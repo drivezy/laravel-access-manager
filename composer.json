@@ -1,0 +1,21 @@
+{
+  "name": "drivezy/laravel-access-manager",
+  "description": "To manage the different access levels across multiple records, routes",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Hemant Kumar Sah",
+      "email": "hemantanshu@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "drivezy/laravel-utility": "^0.9.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Drivezy\\LaravelAccessManager\\": "src/"
+    }
+  }
+}
