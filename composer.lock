@@ -1,0 +1,51 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "bfa93558003692df253c2c1cd90b04ba",
+    "packages": [
+        {
+            "name": "drivezy/laravel-utility",
+            "version": "v0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/drivezy/laravel-utility.git",
+                "reference": "72cd0942ea8dfb1c29e769bf2d9863f56beea860"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/drivezy/laravel-utility/zipball/72cd0942ea8dfb1c29e769bf2d9863f56beea860",
+                "reference": "72cd0942ea8dfb1c29e769bf2d9863f56beea860",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Drivezy\\LaravelUtility\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hemant Kumar Sah",
+                    "email": "hemantanshu@gmail.com"
+                }
+            ],
+            "description": "Base functionality for a scalable application.",
+            "time": "2018-04-10T07:01:27+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
