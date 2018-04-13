@@ -29,6 +29,9 @@ class AccessManager {
 
         $roles = is_array($role) ? $role : [$role];
 
+        //if the access is given to public for the same, allow the same
+        if(in_array(2, $roles)) return true;
+
         foreach ( $roles as $role ) {
             if ( is_numeric($role) ) {
                 if ( in_array($role, $userObject->roles) ) return true;
