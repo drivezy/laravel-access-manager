@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace Drivezy\LaravelAccessManager\Middleware;
 
 use Closure;
 use Drivezy\LaravelAccessManager\RouteManager;
@@ -16,5 +16,7 @@ class ValidateRouteAccess {
     public function handle ($request, Closure $next) {
         if ( RouteManager::validateRouteAccess($request) )
             return $next($request);
+
+        return Response::json(['success' => false, 'response' => 'Insufficient Privileges'], 403);
     }
 }

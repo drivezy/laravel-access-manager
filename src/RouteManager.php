@@ -3,8 +3,8 @@
 namespace Drivezy\LaravelAccessManager;
 
 use Drivezy\LaravelAccessManager\Models\Route;
-use Illuminate\Filesystem\Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Class RouteManager
@@ -21,7 +21,9 @@ class RouteManager {
      * @return bool
      */
     public static function validateRouteAccess (Request $request) {
-        $hash = md5($request->method() . '-' . $request->route()->uri());
+        $uri = preg_replace('/\/\d*$/', '', $request->getRequestUri());
+        $hash = md5($request->method() . '-' . $uri);
+
         $route = self::getRouteDetails($hash);
 
         if ( $route )
@@ -36,14 +38,15 @@ class RouteManager {
     public static function logAllRoutes () {
         $routes = \Illuminate\Support\Facades\Route::getRoutes();
         foreach ( $routes as $route ) {
-            $hash = md5($route->methods[0] . '-' . $route->uri);
+            $url = '/' . preg_replace('/\/{.*?\}|\s*/', '', $route->uri);
+            $hash = md5($route->methods[0] . '-' . $url);
 
             //create record only when its a new record
             $record = Route::where('route_hash', $hash)->first();
             if ( $record ) continue;
 
             Route::create([
-                'uri'        => $route->uri,
+                'uri'        => $url,
                 'method'     => $route->methods[0],
                 'route_hash' => $hash,
             ]);
@@ -77,12 +80,15 @@ class RouteManager {
         $requiredRoles = $requiredPermissions = [];
 
         //if no permission or role is setup for the system, then authorize the request
-        if ( !( sizeof($route->roles) && sizeof($route->permissions) ) )
+        if ( !( sizeof($route->roles) || sizeof($route->permissions) ) )
             return true;
 
         //validate if the route roles match the request
         foreach ( $route->roles as $role )
             array_push($requiredRoles, $role->role_id);
+
+        //if publicly allowed then let it pass through
+        if ( in_array(2, $requiredRoles) ) return true;
 
         if ( AccessManager::hasRole($requiredRoles) )
             return true;
