@@ -1,25 +1,26 @@
 <?php
 
+use App\User;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePermissionTable extends Migration {
+class CreateDzRoutesTable extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
     public function up () {
-        Schema::create('dz_permissions', function (Blueprint $table) {
+        Schema::create('dz_routes', function (Blueprint $table) {
             $userTable = ( new User() )->getTable();
 
             $table->increments('id');
 
-            $table->string('name');
-            $table->string('identifier');
+            $table->string('uri');
+            $table->string('method');
 
-            $table->string('description')->nullable();
+            $table->string('route_hash');
 
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
@@ -30,8 +31,7 @@ class CreatePermissionTable extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('name');
-            $table->index('identifier');
+            $table->index('route_hash');
         });
     }
 
@@ -41,6 +41,6 @@ class CreatePermissionTable extends Migration {
      * @return void
      */
     public function down () {
-        Schema::dropIfExists('dz_permissions');
+        Schema::dropIfExists('dz_routes');
     }
 }

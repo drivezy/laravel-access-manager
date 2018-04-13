@@ -2,6 +2,7 @@
 
 namespace Drivezy\LaravelAccessManager\Models;
 
+use App\User;
 use Drivezy\LaravelAccessManager\Observers\UserGroupObserver;
 use Drivezy\LaravelUtility\Models\BaseModel;
 
@@ -16,10 +17,31 @@ class UserGroup extends BaseModel {
     protected $table = 'dz_user_groups';
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function manager () {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function members () {
         return $this->hasMany(UserGroupMember::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function roles () {
+        return $this->hasMany(RoleAssignment::class, 'source_id')->where('source_type', 'UserGroup');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function permissions () {
+        return $this->hasMany(PermissionAssignment::class, 'source_id')->where('source_type', 'UserGroup');
     }
 
     /**
