@@ -87,9 +87,6 @@ class RouteManager {
         foreach ( $route->roles as $role )
             array_push($requiredRoles, $role->role_id);
 
-        //if publicly allowed then let it pass through
-        if ( in_array(2, $requiredRoles) ) return true;
-
         if ( AccessManager::hasRole($requiredRoles) )
             return true;
 
