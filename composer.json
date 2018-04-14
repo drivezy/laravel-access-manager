@@ -17,5 +17,12 @@
     "psr-4": {
       "Drivezy\\LaravelAccessManager\\": "src/"
     }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Drivezy\\LaravelAccessManager\\LaravelAccessManagerServiceProvider"
+      ]
+    }
   }
 }

@@ -6,6 +6,7 @@ use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Response;
 
 /**
  * Class AccessManager
@@ -25,12 +26,12 @@ class AccessManager {
         $userObject = self::getUserObject();
 
         //super user should always get access to all the resources in the system
-        if ( in_array(1, $userObject->roles) ) return true;
+        if ( in_array(1, $userObject->roles) || in_array('super-admin', $userObject->roles) ) return true;
 
         $roles = is_array($role) ? $role : [$role];
 
         //if the access is given to public for the same, allow the same
-        if(in_array(2, $roles)) return true;
+        if ( in_array(2, $roles) || in_array('public', $roles) ) return true;
 
         foreach ( $roles as $role ) {
             if ( is_numeric($role) ) {
@@ -116,6 +117,13 @@ class AccessManager {
         Cache::forever(self::$identifier . $id, $accessObject);
 
         return $accessObject;
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function unauthorizedAccess () {
+        return Response::json(['success' => false, 'response' => 'Insufficient Privileges'], 403);
     }
 
 }
