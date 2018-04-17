@@ -1,9 +1,11 @@
 <?php
 
-use Drivezy\LaravelAccessManager\Models\Role;
-use Illuminate\Database\Seeder;
+namespace Drivezy\LaravelAccessManager\Database\Seeds;
 
-class RoleSeeder extends Seeder {
+use Drivezy\LaravelAccessManager\Models\Role;
+use Drivezy\LaravelAccessManager\Models\RoleAssignment;
+
+class RoleSeeder {
     /**
      * Run the database seeds.
      *
@@ -20,6 +22,13 @@ class RoleSeeder extends Seeder {
             'name'        => 'Public',
             'identifier'  => 'public',
             'description' => 'When assigned this right, means the user should be able to access it',
+        ]);
+
+        //add super admin role to the first user of the system
+        RoleAssignment::create([
+            'source_type' => 'User',
+            'source_id'   => 1,
+            'role_id'     => 1,
         ]);
     }
 }

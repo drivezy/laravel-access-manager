@@ -1,10 +1,11 @@
 <?php
 
 use App\User;
+use Drivezy\LaravelAccessManager\Database\Seeds\RoleSeeder;
 use Drivezy\LaravelAccessManager\Models\Role;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateRoleAssignmentsTable extends Migration {
     /**
@@ -42,6 +43,8 @@ class CreateRoleAssignmentsTable extends Migration {
 
             $table->index(['source_type', 'source_id']);
         });
+
+        ( new RoleSeeder() )->run();
     }
 
     /**
