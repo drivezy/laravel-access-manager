@@ -4,9 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c8eb2cfd7551f7930fe2a993f4ac8b8",
-    "packages": [],
-    "packages-dev": [
+    "content-hash": "0998e9246b01e9f4af172e42919deb4f",
+    "packages": [
         {
             "name": "drivezy/laravel-utility",
             "version": "v0.9.5",
@@ -48,6 +47,7 @@
             "time": "2018-04-17T18:40:54+00:00"
         }
     ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
