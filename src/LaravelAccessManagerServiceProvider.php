@@ -11,6 +11,10 @@ class LaravelAccessManagerServiceProvider extends ServiceProvider {
      * @return void
      */
     public function boot () {
+        //load routes defined out here
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+
+        //load migrations as part of this package
         $this->loadMigrationsFrom(__DIR__ . '/Database/Migrations');
     }
 

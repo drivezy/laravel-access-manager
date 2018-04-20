@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "53b737c87c0c40e5ae807e9b8afaa6d0",
+    "content-hash": "f1e485d5da6286a5b1314b0b4adf192e",
     "packages": [],
     "packages-dev": [
         {
             "name": "drivezy/laravel-utility",
-            "version": "v0.9.5",
+            "version": "v0.9.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drivezy/laravel-utility.git",
-                "reference": "b361833642f6417189b0a8abbc6e0499d8aa6c60"
+                "reference": "f32a85c4f0002ea96efd3fec5a5c3d70b4a22cd9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drivezy/laravel-utility/zipball/b361833642f6417189b0a8abbc6e0499d8aa6c60",
-                "reference": "b361833642f6417189b0a8abbc6e0499d8aa6c60",
+                "url": "https://api.github.com/repos/drivezy/laravel-utility/zipball/f32a85c4f0002ea96efd3fec5a5c3d70b4a22cd9",
+                "reference": "f32a85c4f0002ea96efd3fec5a5c3d70b4a22cd9",
                 "shasum": ""
             },
             "type": "library",
@@ -45,7 +45,7 @@
                 }
             ],
             "description": "Base functionality for a scalable application.",
-            "time": "2018-04-17T18:40:54+00:00"
+            "time": "2018-04-20T12:27:11+00:00"
         }
     ],
     "aliases": [],
