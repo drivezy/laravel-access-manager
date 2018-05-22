@@ -45,6 +45,24 @@ class AccessManager {
     }
 
     /**
+     * @param $role
+     * @return bool
+     */
+    public static function hasAbsoluteRole ($role) {
+        $userObject = self::getUserObject();
+
+        if ( is_numeric($role) ) {
+            if ( in_array($role, $userObject->roles) ) return true;
+
+            return false;
+        }
+
+        if ( in_array($role, $userObject->roleIdentifiers) ) return true;
+
+        return false;
+    }
+
+    /**
      * @param $permission
      * @return bool
      */
@@ -63,6 +81,24 @@ class AccessManager {
                 if ( in_array($permission, $userObject->permissionIdentifiers) ) return true;
             }
         }
+
+        return false;
+    }
+
+    /**
+     * @param $permission
+     * @return bool
+     */
+    public static function hasAbsolutePermission ($permission) {
+        $userObject = self::getUserObject();
+
+        if ( is_numeric($permission) ) {
+            if ( in_array($permission, $userObject->permissions) ) return true;
+
+            return false;
+        }
+
+        if ( in_array($permission, $userObject->permissionIdentifiers) ) return true;
 
         return false;
     }
