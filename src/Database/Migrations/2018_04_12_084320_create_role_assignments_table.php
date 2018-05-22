@@ -42,6 +42,7 @@ class CreateRoleAssignmentsTable extends Migration {
             $table->softDeletes();
 
             $table->index(['source_type', 'source_id']);
+            $table->index(['target_type', 'target_id']);
         });
 
         ( new RoleSeeder() )->run();
