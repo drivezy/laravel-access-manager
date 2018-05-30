@@ -2,6 +2,7 @@
 
 namespace Drivezy\LaravelAccessManager;
 
+use App\User;
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class AccessManager {
         $userObject = self::getUserObject();
 
         //super user should always get access to all the resources in the system
-        if ( in_array(1, $userObject->roles) || in_array('super-admin', $userObject->roles) ) return true;
+        if ( in_array(1, $userObject->roles) || in_array('super-admin', $userObject->roleIdentifiers) ) return true;
 
         $roles = is_array($role) ? $role : [$role];
 
@@ -125,7 +126,7 @@ class AccessManager {
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
 
         //get the roles that are assigned to the user
-        $records = RoleAssignment::with('role')->where('source_type', 'User')->where('source_id', $id)->get();
+        $records = RoleAssignment::with('role')->where('source_type', User::class)->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->role_id, $roles) ) continue;
 
@@ -134,7 +135,7 @@ class AccessManager {
         }
 
         //get the permissions assigned to the user
-        $records = PermissionAssignment::with('permission')->where('source_type', 'User')->where('source_id', $id)->get();
+        $records = PermissionAssignment::with('permission')->where('source_type', User::class)->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->permission_id, $permissions) ) continue;
 
