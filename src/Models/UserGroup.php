@@ -2,7 +2,7 @@
 
 namespace Drivezy\LaravelAccessManager\Models;
 
-use App\User;
+use Drivezy\LaravelAccessManager\AccessManager;
 use Drivezy\LaravelAccessManager\Observers\UserGroupObserver;
 use Drivezy\LaravelUtility\Models\BaseModel;
 
@@ -20,7 +20,7 @@ class UserGroup extends BaseModel {
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function manager () {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(AccessManager::getUserClass());
     }
 
     /**
