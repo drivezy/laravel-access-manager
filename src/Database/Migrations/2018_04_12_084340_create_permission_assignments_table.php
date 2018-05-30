@@ -1,6 +1,5 @@
 <?php
 
-use App\User;
 use Drivezy\LaravelAccessManager\Models\Permission;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,7 +13,7 @@ class CreatePermissionAssignmentsTable extends Migration {
      */
     public function up () {
         Schema::create('dz_permission_assignments', function (Blueprint $table) {
-            $userTable = ( new User() )->getTable();
+            $userTable = config('utility.user_table');
             $permissionTable = ( new Permission() )->getTable();
 
             $table->increments('id');

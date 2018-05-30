@@ -1,10 +1,9 @@
 <?php
 
-use App\User;
 use Drivezy\LaravelAccessManager\Models\UserGroup;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateDzUserGroupMembersTable extends Migration {
     /**
@@ -14,7 +13,7 @@ class CreateDzUserGroupMembersTable extends Migration {
      */
     public function up () {
         Schema::create('dz_user_group_members', function (Blueprint $table) {
-            $userTable = ( new User() )->getTable();
+            $userTable = config('utility.user_table');
             $groupTable = ( new UserGroup() )->getTable();
 
             $table->increments('id');

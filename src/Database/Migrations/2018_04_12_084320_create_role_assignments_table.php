@@ -1,6 +1,5 @@
 <?php
 
-use App\User;
 use Drivezy\LaravelAccessManager\Database\Seeds\RoleSeeder;
 use Drivezy\LaravelAccessManager\Models\Role;
 use Illuminate\Database\Migrations\Migration;
@@ -15,7 +14,7 @@ class CreateRoleAssignmentsTable extends Migration {
      */
     public function up () {
         Schema::create('dz_role_assignments', function (Blueprint $table) {
-            $userTable = ( new User() )->getTable();
+            $userTable = config('utility.user_table');
             $roleTable = ( new Role() )->getTable();
 
             $table->increments('id');
