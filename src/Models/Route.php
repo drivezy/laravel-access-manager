@@ -19,14 +19,14 @@ class Route extends BaseModel {
      * @return $this
      */
     public function roles () {
-        return $this->hasMany(RoleAssignment::class, 'source_id')->where('source_type', 'Route');
+        return $this->hasMany(RoleAssignment::class, 'source_id')->where('source_type', self::class);
     }
 
     /**
      * @return $this
      */
     public function permissions () {
-        return $this->hasMany(PermissionAssignment::class, 'source_id')->where('source_type', 'Route');
+        return $this->hasMany(PermissionAssignment::class, 'source_id')->where('source_type', self::class);
     }
 
     /**

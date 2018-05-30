@@ -2,6 +2,7 @@
 
 namespace Drivezy\LaravelAccessManager;
 
+use App\User;
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class AccessManager {
         $userObject = self::getUserObject();
 
         //super user should always get access to all the resources in the system
-        if ( in_array(1, $userObject->roles) || in_array('super-admin', $userObject->roles) ) return true;
+        if ( in_array(1, $userObject->roles) || in_array('super-admin', $userObject->roleIdentifiers) ) return true;
 
         $roles = is_array($role) ? $role : [$role];
 
@@ -40,6 +41,24 @@ class AccessManager {
                 if ( in_array($role, $userObject->roleIdentifiers) ) return true;
             }
         }
+
+        return false;
+    }
+
+    /**
+     * @param $role
+     * @return bool
+     */
+    public static function hasAbsoluteRole ($role) {
+        $userObject = self::getUserObject();
+
+        if ( is_numeric($role) ) {
+            if ( in_array($role, $userObject->roles) ) return true;
+
+            return false;
+        }
+
+        if ( in_array($role, $userObject->roleIdentifiers) ) return true;
 
         return false;
     }
@@ -68,6 +87,24 @@ class AccessManager {
     }
 
     /**
+     * @param $permission
+     * @return bool
+     */
+    public static function hasAbsolutePermission ($permission) {
+        $userObject = self::getUserObject();
+
+        if ( is_numeric($permission) ) {
+            if ( in_array($permission, $userObject->permissions) ) return true;
+
+            return false;
+        }
+
+        if ( in_array($permission, $userObject->permissionIdentifiers) ) return true;
+
+        return false;
+    }
+
+    /**
      * @param null $id
      * @return array|mixed
      */
@@ -89,7 +126,7 @@ class AccessManager {
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
 
         //get the roles that are assigned to the user
-        $records = RoleAssignment::with('role')->where('source_type', 'User')->where('source_id', $id)->get();
+        $records = RoleAssignment::with('role')->where('source_type', User::class)->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->role_id, $roles) ) continue;
 
@@ -98,7 +135,7 @@ class AccessManager {
         }
 
         //get the permissions assigned to the user
-        $records = PermissionAssignment::with('permission')->where('source_type', 'User')->where('source_id', $id)->get();
+        $records = PermissionAssignment::with('permission')->where('source_type', User::class)->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->permission_id, $permissions) ) continue;
 
