@@ -3,6 +3,8 @@
 namespace Drivezy\LaravelAccessManager\Observers;
 
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
+use Drivezy\LaravelAccessManager\Models\UserGroup;
+use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Observers\BaseObserver;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
@@ -33,9 +35,9 @@ class PermissionAssignmentObserver extends BaseObserver {
         $members = UserGroupMember::where('user_group_id', $model->source_id)->get();
         foreach ( $members as $member ) {
             PermissionAssignment::create([
-                'source_type'   => 'User',
+                'source_type'   => LaravelUtility::getUserModelFullQualifiedName(),
                 'source_id'     => $member->user_id,
-                'target_type'   => 'UserGroup',
+                'target_type'   => UserGroup::class,
                 'target_id'     => $model->source_id,
                 'permission_id' => $model->permission_id,
             ]);
@@ -47,7 +49,7 @@ class PermissionAssignmentObserver extends BaseObserver {
      * @return bool
      */
     private function removeAssociatedPermissions (Eloquent $model) {
-        if ( $model->source_type == 'User' ) return false;
+        if ( $model->source_type == LaravelUtility::getUserModelFullQualifiedName() ) return false;
 
         PermissionAssignment::where('target_type', $model->source_type)->where('target_id', $model->source_id)
             ->where('permission_id', $model->permission_id)

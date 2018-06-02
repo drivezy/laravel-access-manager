@@ -4,6 +4,7 @@ namespace Drivezy\LaravelAccessManager;
 
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
+use Drivezy\LaravelUtility\LaravelUtility;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Response;
@@ -126,7 +127,7 @@ class AccessManager {
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
 
         //get the roles that are assigned to the user
-        $records = RoleAssignment::with('role')->where('source_type', self::getUserClass())->where('source_id', $id)->get();
+        $records = RoleAssignment::with('role')->where('source_type', LaravelUtility::getUserModelFullQualifiedName())->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->role_id, $roles) ) continue;
 
@@ -135,7 +136,7 @@ class AccessManager {
         }
 
         //get the permissions assigned to the user
-        $records = PermissionAssignment::with('permission')->where('source_type', self::getUserClass())->where('source_id', $id)->get();
+        $records = PermissionAssignment::with('permission')->where('source_type', LaravelUtility::getUserModelFullQualifiedName())->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->permission_id, $permissions) ) continue;
 
@@ -161,16 +162,6 @@ class AccessManager {
      */
     public static function unauthorizedAccess () {
         return Response::json(['success' => false, 'response' => 'Insufficient Privileges'], 403);
-    }
-
-    /**
-     * @return \Illuminate\Config\Repository|mixed|null
-     */
-    public static function getUserClass () {
-        if ( !self::$userClass )
-            self::$userClass = config('utility.user_class');
-
-        return self::$userClass;
     }
 
 }
