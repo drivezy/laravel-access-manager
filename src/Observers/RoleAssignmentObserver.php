@@ -3,7 +3,9 @@
 namespace Drivezy\LaravelAccessManager\Observers;
 
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
+use Drivezy\LaravelAccessManager\Models\UserGroup;
 use Drivezy\LaravelAccessManager\Models\UserGroupMember;
+use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Observers\BaseObserver;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
@@ -48,9 +50,9 @@ class RoleAssignmentObserver extends BaseObserver {
         $members = UserGroupMember::where('user_group_id', $model->source_id)->get();
         foreach ( $members as $member ) {
             RoleAssignment::create([
-                'source_type' => 'User',
+                'source_type' => LaravelUtility::getUserModelFullQualifiedName(),
                 'source_id'   => $member->user_id,
-                'target_type' => 'UserGroup',
+                'target_type' => UserGroup::class,
                 'target_id'   => $model->source_id,
                 'role_id'     => $model->role_id,
             ]);
@@ -62,7 +64,7 @@ class RoleAssignmentObserver extends BaseObserver {
      * @return bool
      */
     private function removeAssociatedRoles (Eloquent $model) {
-        if ( $model->source_type == 'User' ) return false;
+        if ( $model->source_type == LaravelUtility::getUserModelFullQualifiedName() ) return false;
 
         RoleAssignment::where('target_type', $model->source_type)->where('target_id', $model->source_id)
             ->where('role_id', $model->role_id)
