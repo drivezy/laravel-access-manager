@@ -5,6 +5,7 @@ namespace Drivezy\LaravelAccessManager;
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Drivezy\LaravelUtility\LaravelUtility;
+use Drivezy\LaravelUtility\Library\CustomLogging;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Response;
@@ -18,7 +19,6 @@ class AccessManager {
      * @var string
      */
     private static $identifier = 'user-access-object-';
-    private static $userClass = null;
 
     /**
      * @param $role
@@ -161,7 +161,7 @@ class AccessManager {
      * @return mixed
      */
     public static function unauthorizedAccess () {
-        return Response::json(['success' => false, 'response' => 'Insufficient Privileges'], 403);
+        return Response::json(['success' => false, 'response' => 'Insufficient Privileges', CustomLogging::getResponseMessage()], 403);
     }
 
 }
