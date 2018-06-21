@@ -124,10 +124,11 @@ class AccessManager {
      */
     public static function setUserObject ($id = null) {
         $id = $id ? : Auth::id();
+        $userClass = LaravelUtility::getUserModelFullQualifiedName();
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
 
         //get the roles that are assigned to the user
-        $records = RoleAssignment::with('role')->where('source_type', LaravelUtility::getUserModelFullQualifiedName())->where('source_id', $id)->get();
+        $records = RoleAssignment::with('role')->where('source_type', $userClass)->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->role_id, $roles) ) continue;
 
@@ -136,7 +137,7 @@ class AccessManager {
         }
 
         //get the permissions assigned to the user
-        $records = PermissionAssignment::with('permission')->where('source_type', LaravelUtility::getUserModelFullQualifiedName())->where('source_id', $id)->get();
+        $records = PermissionAssignment::with('permission')->where('source_type', $userClass)->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->permission_id, $permissions) ) continue;
 
