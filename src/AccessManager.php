@@ -5,7 +5,6 @@ namespace Drivezy\LaravelAccessManager;
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Drivezy\LaravelUtility\LaravelUtility;
-use Drivezy\LaravelUtility\Library\CustomLogging;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Response;
@@ -19,6 +18,7 @@ class AccessManager {
      * @var string
      */
     private static $identifier = 'user-access-object-';
+    private static $userClass = null;
 
     /**
      * @param $role
@@ -124,10 +124,11 @@ class AccessManager {
      */
     public static function setUserObject ($id = null) {
         $id = $id ? : Auth::id();
+        $userClass = LaravelUtility::getUserModelFullQualifiedName();
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
 
         //get the roles that are assigned to the user
-        $records = RoleAssignment::with('role')->where('source_type', LaravelUtility::getUserModelFullQualifiedName())->where('source_id', $id)->get();
+        $records = RoleAssignment::with('role')->where('source_type', $userClass)->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->role_id, $roles) ) continue;
 
@@ -136,7 +137,7 @@ class AccessManager {
         }
 
         //get the permissions assigned to the user
-        $records = PermissionAssignment::with('permission')->where('source_type', LaravelUtility::getUserModelFullQualifiedName())->where('source_id', $id)->get();
+        $records = PermissionAssignment::with('permission')->where('source_type', $userClass)->where('source_id', $id)->get();
         foreach ( $records as $record ) {
             if ( in_array($record->permission_id, $permissions) ) continue;
 
@@ -161,7 +162,7 @@ class AccessManager {
      * @return mixed
      */
     public static function unauthorizedAccess () {
-        return Response::json(['success' => false, 'response' => 'Insufficient Privileges', CustomLogging::getResponseMessage()], 403);
+        return Response::json(['success' => false, 'response' => 'Insufficient Privileges'], 403);
     }
 
 }
