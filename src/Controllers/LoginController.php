@@ -15,7 +15,7 @@ class LoginController extends Controller {
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSessionDetails () {
+    public function getUserSessionDetails () {
         if ( !Auth::check() )
             return failed_response('Invalid Session');
 
