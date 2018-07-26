@@ -29,7 +29,7 @@ class RoleAssignmentObserver extends BaseObserver {
     public function created (Eloquent $model) {
         parent::created($model);
 
-        if ( $model->source_type == 'UserGroup' )
+        if ( $model->source_type == md5(UserGroup::class) )
             self::attachRoleToGroup($model);
     }
 
@@ -50,9 +50,9 @@ class RoleAssignmentObserver extends BaseObserver {
         $members = UserGroupMember::where('user_group_id', $model->source_id)->get();
         foreach ( $members as $member ) {
             RoleAssignment::create([
-                'source_type' => LaravelUtility::getUserModelFullQualifiedName(),
+                'source_type' => md5(LaravelUtility::getUserModelFullQualifiedName()),
                 'source_id'   => $member->user_id,
-                'target_type' => UserGroup::class,
+                'target_type' => md5(UserGroup::class),
                 'target_id'   => $model->source_id,
                 'role_id'     => $model->role_id,
             ]);
@@ -64,7 +64,7 @@ class RoleAssignmentObserver extends BaseObserver {
      * @return bool
      */
     private function removeAssociatedRoles (Eloquent $model) {
-        if ( $model->source_type == LaravelUtility::getUserModelFullQualifiedName() ) return false;
+        if ( $model->source_type == md5(LaravelUtility::getUserModelFullQualifiedName()) ) return false;
 
         RoleAssignment::where('target_type', $model->source_type)->where('target_id', $model->source_id)
             ->where('role_id', $model->role_id)

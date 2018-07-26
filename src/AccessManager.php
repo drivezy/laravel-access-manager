@@ -124,7 +124,7 @@ class AccessManager {
      */
     public static function setUserObject ($id = null) {
         $id = $id ? : Auth::id();
-        $userClass = LaravelUtility::getUserModelFullQualifiedName();
+        $userClass = md5(LaravelUtility::getUserModelFullQualifiedName());
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
 
         //get the roles that are assigned to the user

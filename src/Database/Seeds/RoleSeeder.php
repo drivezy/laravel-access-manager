@@ -27,7 +27,7 @@ class RoleSeeder {
 
         //add super admin role to the first user of the system
         RoleAssignment::create([
-            'source_type' => LaravelUtility::getUserModelFullQualifiedName(),
+            'source_type' => md5(LaravelUtility::getUserModelFullQualifiedName()),
             'source_id'   => 1,
             'role_id'     => 1,
         ]);

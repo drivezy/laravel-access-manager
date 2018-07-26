@@ -45,12 +45,12 @@ class UserGroupMemberObserver extends BaseObserver {
      * @param Eloquent $model
      */
     private function attachRoleToUser (Eloquent $model) {
-        $roles = RoleAssignment::where('source_type', UserGroup::class)->where('source_id', $model->id)->get();
+        $roles = RoleAssignment::where('source_type', md5(UserGroup::class))->where('source_id', $model->id)->get();
         foreach ( $roles as $role ) {
             RoleAssignment::create([
-                'source_type' => LaravelUtility::getUserModelFullQualifiedName(),
+                'source_type' => md5(LaravelUtility::getUserModelFullQualifiedName()),
                 'source_id'   => $model->user_id,
-                'target_type' => UserGroup::class,
+                'target_type' => md5(UserGroup::class),
                 'target_id'   => $model->user_group_id,
                 'role_id'     => $role->role_id,
             ]);
@@ -64,9 +64,9 @@ class UserGroupMemberObserver extends BaseObserver {
         $permissions = PermissionAssignment::where('source_type', UserGroup::class)->where('source_id', $model->id)->get();
         foreach ( $permissions as $permission ) {
             PermissionAssignment::create([
-                'source_type'   => LaravelUtility::getUserModelFullQualifiedName(),
+                'source_type'   => md5(LaravelUtility::getUserModelFullQualifiedName()),
                 'source_id'     => $model->user_id,
-                'target_type'   => UserGroup::class,
+                'target_type'   => md5(UserGroup::class),
                 'target_id'     => $model->user_group_id,
                 'permission_id' => $permission->permission_id,
             ]);
@@ -77,8 +77,8 @@ class UserGroupMemberObserver extends BaseObserver {
      * @param Eloquent $model
      */
     private function removeRoleFromUser (Eloquent $model) {
-        RoleAssignment::where('source_type', LaravelUtility::getUserModelFullQualifiedName())->where('source_id', $model->user_id)
-            ->where('target_type', UserGroup::class)->where('target_id', $model->user_group_id)
+        RoleAssignment::where('source_type', md5(LaravelUtility::getUserModelFullQualifiedName()))->where('source_id', $model->user_id)
+            ->where('target_type', md5(UserGroup::class))->where('target_id', $model->user_group_id)
             ->delete();
     }
 
@@ -86,8 +86,8 @@ class UserGroupMemberObserver extends BaseObserver {
      * @param Eloquent $model
      */
     private function removePermissionFromUser (Eloquent $model) {
-        PermissionAssignment::where('source_type', LaravelUtility::getUserModelFullQualifiedName())->where('source_id', $model->user_id)
-            ->where('target_type', UserGroup::class)->where('target_id', $model->user_group_id)
+        PermissionAssignment::where('source_type', md5(LaravelUtility::getUserModelFullQualifiedName()))->where('source_id', $model->user_id)
+            ->where('target_type', md5(UserGroup::class))->where('target_id', $model->user_group_id)
             ->delete();
     }
 }
