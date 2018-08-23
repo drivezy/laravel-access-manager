@@ -45,7 +45,7 @@ class UserGroupMemberObserver extends BaseObserver {
      * @param Eloquent $model
      */
     private function attachRoleToUser (Eloquent $model) {
-        $roles = RoleAssignment::where('source_type', md5(UserGroup::class))->where('source_id', $model->id)->get();
+        $roles = RoleAssignment::where('source_type', md5(UserGroup::class))->where('source_id', $model->user_group_id)->get();
         foreach ( $roles as $role ) {
             RoleAssignment::create([
                 'source_type' => md5(LaravelUtility::getUserModelFullQualifiedName()),
@@ -61,7 +61,7 @@ class UserGroupMemberObserver extends BaseObserver {
      * @param Eloquent $model
      */
     private function attachPermissionToUser (Eloquent $model) {
-        $permissions = PermissionAssignment::where('source_type', UserGroup::class)->where('source_id', $model->id)->get();
+        $permissions = PermissionAssignment::where('source_type', md5(UserGroup::class))->where('source_id', $model->user_group_id)->get();
         foreach ( $permissions as $permission ) {
             PermissionAssignment::create([
                 'source_type'   => md5(LaravelUtility::getUserModelFullQualifiedName()),

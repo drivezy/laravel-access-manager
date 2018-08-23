@@ -8,6 +8,6 @@ class PermissionObserver extends BaseObserver {
     protected $rules = [];
 
     protected $createRules = [
-        'identifier' => 'required|unique',
+        'identifier' => 'required|unique:dz_permissions',
     ];
 }
