@@ -4,6 +4,7 @@ namespace Drivezy\LaravelAccessManager\Observers;
 
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
 use Drivezy\LaravelAccessManager\Models\UserGroup;
+use Drivezy\LaravelAccessManager\Models\UserGroupMember;
 use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Observers\BaseObserver;
 use Illuminate\Database\Eloquent\Model as Eloquent;
