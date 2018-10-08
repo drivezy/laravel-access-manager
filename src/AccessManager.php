@@ -5,6 +5,7 @@ namespace Drivezy\LaravelAccessManager;
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Drivezy\LaravelUtility\LaravelUtility;
+use Drivezy\LaravelUtility\Library\DateUtil;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Response;
@@ -53,6 +54,7 @@ class AccessManager {
     public static function hasAbsoluteRole ($role) {
         $userObject = self::getUserObject();
 
+        //check if passed role is ids
         if ( is_numeric($role) ) {
             if ( in_array($role, $userObject->roles) ) return true;
 
@@ -112,10 +114,19 @@ class AccessManager {
     public static function getUserObject ($id = null) {
         $id = $id ? : Auth::id();
 
-        if ( Cache::has(self::$identifier . $id) )
-            return Cache::get(self::$identifier . $id);
+        //if no logged in user or no user passed
+        if ( !$id ) return false;
 
-        return self::setUserObject($id);
+        //see if the user object is present in the cache
+        $object = Cache::get(self::$identifier . $id, false);
+        if ( !$object )
+            return self::setUserObject($id);
+
+        //check if the user object is older than 30 mins
+        if ( DateUtil::getDateTimeDifference($object->refreshed_time, DateUtil::getDateTime()) > 30 * 60 )
+            return self::setUserObject($id);
+
+        return $object;
     }
 
     /**
@@ -151,6 +162,7 @@ class AccessManager {
             'roleIdentifiers'       => $roleIdentifiers,
             'permissions'           => $permissions,
             'permissionIdentifiers' => $permissionIdentifiers,
+            'refreshed_time'        => DateUtil::getDateTime(),
         ];
 
         Cache::forever(self::$identifier . $id, $accessObject);
