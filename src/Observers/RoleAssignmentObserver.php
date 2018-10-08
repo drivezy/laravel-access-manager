@@ -2,6 +2,7 @@
 
 namespace Drivezy\LaravelAccessManager\Observers;
 
+use Drivezy\LaravelAccessManager\AccessManager;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Drivezy\LaravelAccessManager\Models\UserGroup;
 use Drivezy\LaravelAccessManager\Models\UserGroupMember;
@@ -41,6 +42,16 @@ class RoleAssignmentObserver extends BaseObserver {
 
         //remove all correlated items
         self::removeAssociatedRoles($model);
+    }
+
+    /**
+     * @param Eloquent $model
+     */
+    public function saved (Eloquent $model) {
+        parent::saved($model);
+
+        if ( $model->source_type == '70d5a8d4402b30b0935f4cd6e9a92729' )
+            AccessManager::setUserObject($model->source_id);
     }
 
     /**
