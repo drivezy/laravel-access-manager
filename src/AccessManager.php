@@ -25,7 +25,7 @@ class AccessManager {
      * @param $role
      * @return bool
      */
-    public static function hasRole ($role) {
+    public static function hasRole ($role = null) {
         $userObject = self::getUserObject();
 
         //super user should always get access to all the resources in the system
@@ -123,6 +123,9 @@ class AccessManager {
             return self::setUserObject($id);
 
         //check if the user object is older than 30 mins
+        if ( !isset($object->refreshed_time) )
+            return self::setUserObject($id);
+
         if ( DateUtil::getDateTimeDifference($object->refreshed_time, DateUtil::getDateTime()) > 30 * 60 )
             return self::setUserObject($id);
 
@@ -135,8 +138,17 @@ class AccessManager {
      */
     public static function setUserObject ($id = null) {
         $id = $id ? : Auth::id();
-        $userClass = md5(LaravelUtility::getUserModelFullQualifiedName());
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
+
+        if ( !$id ) return (object) [
+            'roles'                 => $roles,
+            'roleIdentifiers'       => $roleIdentifiers,
+            'permissions'           => $permissions,
+            'permissionIdentifiers' => $permissionIdentifiers,
+            'refreshed_time'        => DateUtil::getDateTime(),
+        ];;
+
+        $userClass = md5(LaravelUtility::getUserModelFullQualifiedName());
 
         //get the roles that are assigned to the user
         $records = RoleAssignment::with('role')->where('source_type', $userClass)->where('source_id', $id)->get();
