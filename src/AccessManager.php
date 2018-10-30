@@ -113,9 +113,17 @@ class AccessManager {
      */
     public static function getUserObject ($id = null) {
         $id = $id ? : Auth::id();
+        $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
 
         //if no logged in user or no user passed
-        if ( !$id ) return false;
+        if ( !$id )
+            return (object) [
+                'roles'                 => $roles,
+                'roleIdentifiers'       => $roleIdentifiers,
+                'permissions'           => $permissions,
+                'permissionIdentifiers' => $permissionIdentifiers,
+                'refreshed_time'        => DateUtil::getDateTime(),
+            ];
 
         //see if the user object is present in the cache
         $object = Cache::get(self::$identifier . $id, false);
@@ -146,7 +154,7 @@ class AccessManager {
             'permissions'           => $permissions,
             'permissionIdentifiers' => $permissionIdentifiers,
             'refreshed_time'        => DateUtil::getDateTime(),
-        ];;
+        ];
 
         $userClass = md5(LaravelUtility::getUserModelFullQualifiedName());
 
