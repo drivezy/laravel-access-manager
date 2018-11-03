@@ -3,6 +3,7 @@
 namespace Drivezy\LaravelAccessManager;
 
 use Drivezy\LaravelAccessManager\Models\ImpersonatingUser;
+use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Library\DateUtil;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,10 +18,6 @@ class ImpersonationManager {
      */
     public static function impersonateUser ($userId) {
         if ( !Auth::check() ) return false;
-
-        if ( !AccessManager::hasPermission('impersonation-manager') ) {
-            return invalid_operation();
-        }
 
         $parentUser = Auth::user();
 
@@ -73,6 +70,8 @@ class ImpersonationManager {
 
         if ( !$record ) return [];
 
-        return AccessManager::getUserObject($record->parent_user_id);
+        $userClass = LaravelUtility::getUserModelFullQualifiedName();
+
+        return $userClass::find($record->parent_user_id);
     }
 }

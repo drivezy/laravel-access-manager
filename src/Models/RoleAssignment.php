@@ -24,6 +24,13 @@ class RoleAssignment extends BaseModel {
     }
 
     /**
+     * @return $this
+     */
+    public function user_group () {
+        return $this->belongsTo(UserGroup::class, 'target_id');
+    }
+
+    /**
      *
      */
     public static function boot () {
