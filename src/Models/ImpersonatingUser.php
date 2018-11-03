@@ -13,7 +13,7 @@ class ImpersonatingUser extends BaseModel {
     /**
      * @var string
      */
-    protected $table = 'dz_impersonating_user';
+    protected $table = 'dz_impersonating_users';
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

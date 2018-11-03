@@ -114,7 +114,7 @@ class AccessManager {
     public static function getUserObject ($id = null) {
         $id = $id ? : Auth::id();
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
-
+        
         //if no logged in user or no user passed
         if ( !$id )
             return (object) [
