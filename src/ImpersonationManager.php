@@ -74,4 +74,23 @@ class ImpersonationManager {
 
         return $userClass::find($record->parent_user_id);
     }
+
+    /**
+     * get the actual user who is logged into the system
+     * @return array
+     */
+    public static function getActualLoggedUser () {
+        if ( !Auth::check() ) return [];
+
+        $record = ImpersonatingUser::active()
+            ->where('session_identifier', session()->getId())
+            ->where('impersonating_user_id', Auth::id())
+            ->first();
+
+        if ( !$record ) return Auth::user();
+
+        $userClass = LaravelUtility::getUserModelFullQualifiedName();
+
+        return $userClass::find($record->parent_user_id);
+    }
 }
