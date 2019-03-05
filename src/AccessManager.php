@@ -8,6 +8,7 @@ use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Library\DateUtil;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Response;
 
 /**
@@ -19,6 +20,9 @@ class AccessManager {
      * @var string
      */
     private static $identifier = 'user-access-object-';
+    /**
+     * @var null
+     */
     private static $userClass = null;
 
     /**
@@ -114,7 +118,7 @@ class AccessManager {
     public static function getUserObject ($id = null) {
         $id = $id ? : Auth::id();
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
-        
+
         //if no logged in user or no user passed
         if ( !$id )
             return (object) [
@@ -195,6 +199,50 @@ class AccessManager {
      */
     public static function unauthorizedAccess () {
         return Response::json(['success' => false, 'response' => 'Insufficient Privileges'], 403);
+    }
+
+    /**
+     * @return bool|\Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    public static function getUserSessionDetails () {
+        if ( !Auth::check() ) return false;
+
+        $user = Auth::user();
+
+        $user->access_object = AccessManager::setUserObject();
+        $user->parent_user = ImpersonationManager::getImpersonatingUserSession();
+        $user->access_token = AccessManager::generateTimeBasedUserToken($user);
+
+        return $user;
+    }
+
+
+    /**
+     * @param $token
+     * @return bool
+     */
+    public static function verifyTimeBasedUserToken ($token) {
+        try {
+            $obj = explode(':', Crypt::decrypt($token));
+            if ( $obj[2] - strtotime('now') > 0 ) {
+                return $obj[0];
+            }
+        } catch ( DecryptException $e ) {
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $user
+     * @return mixed
+     */
+    public static function generateTimeBasedUserToken ($user = null) {
+        $user = $user ? : Auth::user();
+
+        $string = $user->id . ':' . $user->email_id . ':' . strtotime("+1 day");
+
+        return Crypt::encrypt($string);
     }
 
 }
