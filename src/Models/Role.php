@@ -16,6 +16,13 @@ class Role extends BaseModel {
     protected $table = 'dz_roles';
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ip_restrictions () {
+        return $this->hasMany(IPRestriction::class, 'source_id')->where('source_type', md5(self::class));
+    }
+
+    /**
      * Load the observer rule against the model
      */
     public static function boot () {

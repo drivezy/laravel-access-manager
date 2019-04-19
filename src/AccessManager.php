@@ -2,13 +2,14 @@
 
 namespace Drivezy\LaravelAccessManager;
 
+use Drivezy\LaravelAccessManager\Models\IPRestriction;
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
+use Drivezy\LaravelAccessManager\Models\Role;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Library\DateUtil;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Response;
 
 /**
@@ -20,17 +21,14 @@ class AccessManager {
      * @var string
      */
     private static $identifier = 'user-access-object-';
-    /**
-     * @var null
-     */
-    private static $userClass = null;
 
     /**
      * @param $role
+     * @param $userId
      * @return bool
      */
-    public static function hasRole ($role = null) {
-        $userObject = self::getUserObject();
+    public static function hasRole ($role = null, $userId = null) {
+        $userObject = self::getUserObject($userId);
 
         //super user should always get access to all the resources in the system
         if ( in_array(1, $userObject->roles) || in_array('super-admin', $userObject->roleIdentifiers) ) return true;
@@ -53,10 +51,11 @@ class AccessManager {
 
     /**
      * @param $role
+     * @param $userId
      * @return bool
      */
-    public static function hasAbsoluteRole ($role) {
-        $userObject = self::getUserObject();
+    public static function hasAbsoluteRole ($role, $userId = null) {
+        $userObject = self::getUserObject($userId);
 
         //check if passed role is ids
         if ( is_numeric($role) ) {
@@ -72,10 +71,11 @@ class AccessManager {
 
     /**
      * @param $permission
+     * @param $userId
      * @return bool
      */
-    public static function hasPermission ($permission) {
-        $userObject = self::getUserObject();
+    public static function hasPermission ($permission, $userId = null) {
+        $userObject = self::getUserObject($userId);
 
         //super user should always get access to all the resources in the system
         if ( in_array(1, $userObject->roles) ) return true;
@@ -95,10 +95,11 @@ class AccessManager {
 
     /**
      * @param $permission
+     * @param $userId
      * @return bool
      */
-    public static function hasAbsolutePermission ($permission) {
-        $userObject = self::getUserObject();
+    public static function hasAbsolutePermission ($permission, $userId = null) {
+        $userObject = self::getUserObject($userId);
 
         if ( is_numeric($permission) ) {
             if ( in_array($permission, $userObject->permissions) ) return true;
@@ -127,6 +128,7 @@ class AccessManager {
                 'permissions'           => $permissions,
                 'permissionIdentifiers' => $permissionIdentifiers,
                 'refreshed_time'        => DateUtil::getDateTime(),
+                'restricted_ips'        => [],
             ];
 
         //see if the user object is present in the cache
@@ -158,6 +160,7 @@ class AccessManager {
             'permissions'           => $permissions,
             'permissionIdentifiers' => $permissionIdentifiers,
             'refreshed_time'        => DateUtil::getDateTime(),
+            'restricted_ips'        => [],
         ];
 
         $userClass = md5(LaravelUtility::getUserModelFullQualifiedName());
@@ -180,6 +183,11 @@ class AccessManager {
             array_push($permissionIdentifiers, $record->permission->identifier);
         }
 
+        //check if user is for restricted ips
+        $restrictedIps = [];
+        if ( in_array('ip-restricted-user', $roleIdentifiers) )
+            $restrictedIps = array_merge(['0.0.0.0/32'], IPRestriction::where('source_type', md5(Role::class))->whereIn('source_id', $roles)->pluck('ip_address')->toArray());
+
         //create the access object against the user
         $accessObject = (object) [
             'roles'                 => $roles,
@@ -187,6 +195,7 @@ class AccessManager {
             'permissions'           => $permissions,
             'permissionIdentifiers' => $permissionIdentifiers,
             'refreshed_time'        => DateUtil::getDateTime(),
+            'restricted_ips'        => $restrictedIps,
         ];
 
         Cache::forever(self::$identifier . $id, $accessObject);
@@ -199,50 +208,6 @@ class AccessManager {
      */
     public static function unauthorizedAccess () {
         return Response::json(['success' => false, 'response' => 'Insufficient Privileges'], 403);
-    }
-
-    /**
-     * @return bool|\Illuminate\Contracts\Auth\Authenticatable|null
-     */
-    public static function getUserSessionDetails () {
-        if ( !Auth::check() ) return false;
-
-        $user = Auth::user();
-
-        $user->access_object = AccessManager::setUserObject();
-        $user->parent_user = ImpersonationManager::getImpersonatingUserSession();
-        $user->access_token = AccessManager::generateTimeBasedUserToken($user);
-
-        return $user;
-    }
-
-
-    /**
-     * @param $token
-     * @return bool
-     */
-    public static function verifyTimeBasedUserToken ($token) {
-        try {
-            $obj = explode(':', Crypt::decrypt($token));
-            if ( $obj[2] - strtotime('now') > 0 ) {
-                return $obj[0];
-            }
-        } catch ( DecryptException $e ) {
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $user
-     * @return mixed
-     */
-    public static function generateTimeBasedUserToken ($user = null) {
-        $user = $user ? : Auth::user();
-
-        $string = $user->id . ':' . $user->email_id . ':' . strtotime("+1 day");
-
-        return Crypt::encrypt($string);
     }
 
 }
