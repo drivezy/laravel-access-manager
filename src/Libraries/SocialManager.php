@@ -4,6 +4,7 @@ namespace Drivezy\LaravelAccessManager\Libraries;
 
 use Drivezy\LaravelAccessManager\Models\SocialIdentifier;
 use Drivezy\LaravelUtility\Library\DateUtil;
+use Drivezy\LaravelUtility\Library\RemoteRequest;
 use Illuminate\Support\Facades\Auth;
 use P2PApp\User;
 
@@ -13,12 +14,6 @@ use P2PApp\User;
  */
 class SocialManager {
     private static function findUserByIdentifier ($identifier, $source) {
-        $user = User::whereNotNull('identifier')->where('identifier', $identifier)
-            ->first();
-        if ( $user ) {
-            return self::loginUser($user);
-        }
-
         $otherSocialIdentifier = SocialIdentifier::where('identifier', $identifier)
             ->where('source', $source)
             ->first();

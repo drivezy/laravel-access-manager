@@ -18,6 +18,6 @@ class ValidateRouteAccess {
         if ( RouteManager::validateRouteAccess($request) )
             return $next($request);
 
-        return AccessManager::unauthorizedAccess();
+        return Response::json(['success' => false, 'response' => 'Route access not allowed'], 403);
     }
 }
