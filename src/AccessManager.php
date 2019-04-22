@@ -4,12 +4,12 @@ namespace Drivezy\LaravelAccessManager;
 
 use Drivezy\LaravelAccessManager\Models\IPRestriction;
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
-use Drivezy\LaravelAccessManager\Models\Role;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Library\DateUtil;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Response;
 
 /**
@@ -21,13 +21,21 @@ class AccessManager {
      * @var string
      */
     private static $identifier = 'user-access-object-';
+    /**
+     * @var null
+     */
+    private static $userClass = null;
 
     /**
+     * validate if a given user has a particular role or not
+     * it accepts both literal as well as role id
+     * global override for super admin users
+     * override for public role as well
      * @param $role
-     * @param $userId
+     * @param null $userId
      * @return bool
      */
-    public static function hasRole ($role = null, $userId = null) {
+    public static function hasRole ($role, $userId = null) {
         $userObject = self::getUserObject($userId);
 
         //super user should always get access to all the resources in the system
@@ -50,6 +58,7 @@ class AccessManager {
     }
 
     /**
+     * validate if a given user has a particular role or not
      * @param $role
      * @param $userId
      * @return bool
@@ -70,8 +79,10 @@ class AccessManager {
     }
 
     /**
+     * Validate if the user a particular permission
+     * global override for super admin user
      * @param $permission
-     * @param $userId
+     * @param null $userId
      * @return bool
      */
     public static function hasPermission ($permission, $userId = null) {
@@ -94,8 +105,9 @@ class AccessManager {
     }
 
     /**
+     * Validate if the user has a particular permission
      * @param $permission
-     * @param $userId
+     * @param null $userId
      * @return bool
      */
     public static function hasAbsolutePermission ($permission, $userId = null) {
@@ -148,7 +160,7 @@ class AccessManager {
 
     /**
      * @param null $id
-     * @return array
+     * @return object
      */
     public static function setUserObject ($id = null) {
         $id = $id ? : Auth::id();
@@ -188,6 +200,7 @@ class AccessManager {
         if ( in_array('ip-restricted-user', $roleIdentifiers) )
             $restrictedIps = array_merge(['0.0.0.0/32'], IPRestriction::where('source_type', md5(Role::class))->whereIn('source_id', $roles)->pluck('ip_address')->toArray());
 
+
         //create the access object against the user
         $accessObject = (object) [
             'roles'                 => $roles,
@@ -208,6 +221,50 @@ class AccessManager {
      */
     public static function unauthorizedAccess () {
         return Response::json(['success' => false, 'response' => 'Insufficient Privileges'], 403);
+    }
+
+    /**
+     * @return bool|\Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    public static function getUserSessionDetails () {
+        if ( !Auth::check() ) return false;
+
+        $user = Auth::user();
+
+        $user->access_object = AccessManager::setUserObject();
+        $user->parent_user = ImpersonationManager::getImpersonatingUserSession();
+        $user->access_token = AccessManager::generateTimeBasedUserToken($user);
+
+        return $user;
+    }
+
+
+    /**
+     * @param $token
+     * @return bool
+     */
+    public static function verifyTimeBasedUserToken ($token) {
+        try {
+            $obj = explode(':', Crypt::decrypt($token));
+            if ( $obj[2] - strtotime('now') > 0 ) {
+                return $obj[0];
+            }
+        } catch ( DecryptException $e ) {
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $user
+     * @return mixed
+     */
+    public static function generateTimeBasedUserToken ($user = null) {
+        $user = $user ? : Auth::user();
+
+        $string = $user->id . ':' . $user->email . ':' . strtotime("+1 day");
+
+        return Crypt::encrypt($string);
     }
 
 }

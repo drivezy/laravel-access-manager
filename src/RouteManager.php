@@ -4,6 +4,7 @@ namespace Drivezy\LaravelAccessManager;
 
 use Drivezy\LaravelAccessManager\Models\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\IpUtils;
 
@@ -22,17 +23,46 @@ class RouteManager {
      * @return bool
      */
     public static function validateRouteAccess (Request $request) {
+        //check all the request headers for authentication mechanism
+        self::checkRequestHeaders($request);
+
         $uri = preg_replace('/\/\d*$/', '', $request->getRequestUri());
         $hash = md5($request->method() . '-' . $uri);
 
         $route = self::getRouteDetails($hash);
 
+        //check if ip whitelisting is allowed for the particular request
         if ( !self::isIPAllowed() ) return false;
 
         if ( $route )
             return self::isRouteAllowed($route);
 
         return true;
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Auth\Authenticatable|void
+     */
+    private static function checkRequestHeaders (Request $request) {
+        if ( Auth::check() ) return;
+
+        if ( $request->hasHeader('access_token') ) {
+            $userId = AccessManager::verifyTimeBasedUserToken($request->header('access_token'));
+            if ( $userId )
+                return Auth::loginUsingId($userId);
+        }
+
+        if ( $request->has('access_token') ) {
+            $userId = AccessManager::verifyTimeBasedUserToken($request->access_token);
+            if ( $userId )
+                return Auth::loginUsingId($userId);
+        }
+
+        //check for the basic authentication
+        if ( $request->hasHeader('PHP_AUTH_USER') || $request->hasHeader('HTTP_AUTHORIZATION') ) {
+            Auth::basic('email');
+        }
     }
 
     /**
@@ -102,6 +132,7 @@ class RouteManager {
 
         return false;
     }
+
 
     /**
      * @return bool
