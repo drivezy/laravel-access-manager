@@ -2,6 +2,7 @@
 
 namespace Drivezy\LaravelAccessManager;
 
+use Drivezy\LaravelAccessManager\Middleware\InternalRouteMiddleware;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelAccessManagerServiceProvider extends ServiceProvider {
@@ -13,7 +14,7 @@ class LaravelAccessManagerServiceProvider extends ServiceProvider {
     public function boot () {
         //load routes defined out here
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
-        
+
         //load migrations as part of this package
         $this->loadMigrationsFrom(__DIR__ . '/Database/Migrations');
     }
@@ -24,6 +25,6 @@ class LaravelAccessManagerServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register () {
-
+        $this->app['router']->aliasMiddleware('internal', InternalRouteMiddleware::class);
     }
 }
