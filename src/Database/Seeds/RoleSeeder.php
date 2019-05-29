@@ -30,12 +30,6 @@ class RoleSeeder extends BaseSeeder {
             'description' => 'When assigned this right, means the user should be able to access it',
         ]);
 
-        Role::create([
-            'name'        => 'Internal',
-            'identifier'  => 'internal',
-            'description' => 'All users who are part of the organization comes under this one',
-        ]);
-
         //add super admin role to the first user of the system
         RoleAssignment::create([
             'source_type' => md5(LaravelUtility::getUserModelFullQualifiedName()),
