@@ -4,21 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f1e485d5da6286a5b1314b0b4adf192e",
-    "packages": [],
-    "packages-dev": [
+    "content-hash": "887e3c7b06e7ecf0ca259679476f02d2",
+    "packages": [
         {
             "name": "drivezy/laravel-utility",
-            "version": "v0.9.8",
+            "version": "v1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drivezy/laravel-utility.git",
-                "reference": "f32a85c4f0002ea96efd3fec5a5c3d70b4a22cd9"
+                "reference": "093d85acdaac7c2fbabc48f7058e91670e6b9e54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drivezy/laravel-utility/zipball/f32a85c4f0002ea96efd3fec5a5c3d70b4a22cd9",
-                "reference": "f32a85c4f0002ea96efd3fec5a5c3d70b4a22cd9",
+                "url": "https://api.github.com/repos/drivezy/laravel-utility/zipball/093d85acdaac7c2fbabc48f7058e91670e6b9e54",
+                "reference": "093d85acdaac7c2fbabc48f7058e91670e6b9e54",
                 "shasum": ""
             },
             "type": "library",
@@ -32,7 +31,10 @@
             "autoload": {
                 "psr-4": {
                     "Drivezy\\LaravelUtility\\": "src/"
-                }
+                },
+                "files": [
+                    "src/Library/helpers.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -45,9 +47,10 @@
                 }
             ],
             "description": "Base functionality for a scalable application.",
-            "time": "2018-04-20T12:27:11+00:00"
+            "time": "2019-08-22T08:49:03+00:00"
         }
     ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
