@@ -4,6 +4,7 @@ namespace Drivezy\LaravelAccessManager;
 
 use Drivezy\LaravelAccessManager\Models\IPRestriction;
 use Drivezy\LaravelAccessManager\Models\PermissionAssignment;
+use Drivezy\LaravelAccessManager\Models\Role;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Library\DateUtil;
