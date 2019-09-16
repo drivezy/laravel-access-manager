@@ -5,7 +5,7 @@ namespace Drivezy\LaravelAccessManager\Database\Seeds;
 use Drivezy\LaravelAccessManager\Models\Role;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Drivezy\LaravelUtility\LaravelUtility;
-use Drivezy\LaravelUtility\src\Database\Seeds\BaseSeeder;
+use Drivezy\LaravelUtility\Database\Seeds\BaseSeeder;
 
 /**
  * Class RoleSeeder

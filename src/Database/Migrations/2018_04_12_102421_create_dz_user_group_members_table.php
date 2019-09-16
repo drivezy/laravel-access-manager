@@ -17,13 +17,13 @@ class CreateDzUserGroupMembersTable extends Migration {
             $userTable = LaravelUtility::getUserTable();
             $groupTable = ( new UserGroup() )->getTable();
 
-            $table->increments('id');
+            $table->bigIncrements('id');
 
-            $table->unsignedInteger('user_group_id')->nullable();
-            $table->unsignedInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_group_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
 
-            $table->unsignedInteger('created_by')->nullable();
-            $table->unsignedInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
 
             $table->foreign('user_group_id')->references('id')->on($groupTable);
             $table->foreign('user_id')->references('id')->on($userTable);

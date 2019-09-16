@@ -17,18 +17,18 @@ class CreateDzPermissionAssignmentsTable extends Migration {
             $userTable = LaravelUtility::getUserTable();
             $permissionTable = ( new Permission() )->getTable();
 
-            $table->increments('id');
+            $table->bigIncrements('id');
 
-            $table->unsignedInteger('permission_id')->nullable();
+            $table->unsignedBigInteger('permission_id')->nullable();
 
             $table->string('source_type')->nullable();
-            $table->unsignedInteger('source_id')->nullable();
+            $table->unsignedBigInteger('source_id')->nullable();
 
             $table->string('target_type')->nullable();
-            $table->unsignedInteger('target_id')->nullable();
+            $table->unsignedBigInteger('target_id')->nullable();
 
-            $table->unsignedInteger('created_by')->nullable();
-            $table->unsignedInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
 
             $table->foreign('permission_id')->references('id')->on($permissionTable);
 
