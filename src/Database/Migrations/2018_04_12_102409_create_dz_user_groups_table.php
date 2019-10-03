@@ -15,15 +15,15 @@ class CreateDzUserGroupsTable extends Migration {
         Schema::create('dz_user_groups', function (Blueprint $table) {
             $userTable = LaravelUtility::getUserTable();
 
-            $table->increments('id');
+            $table->bigIncrements('id');
 
             $table->string('name');
             $table->string('description')->nullable();
 
-            $table->unsignedInteger('manager_id')->nullable();
+            $table->unsignedBigInteger('manager_id')->nullable();
 
-            $table->unsignedInteger('created_by')->nullable();
-            $table->unsignedInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
 
             $table->foreign('manager_id')->references('id')->on($userTable);
 
