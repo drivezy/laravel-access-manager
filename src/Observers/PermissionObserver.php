@@ -4,7 +4,8 @@ namespace Drivezy\LaravelAccessManager\Observers;
 
 use Drivezy\LaravelUtility\Observers\BaseObserver;
 
-class PermissionObserver extends BaseObserver {
+class PermissionObserver extends BaseObserver
+{
     protected $rules = [];
 
     protected $createRules = [

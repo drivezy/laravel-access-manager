@@ -9,7 +9,8 @@ use Drivezy\LaravelUtility\Models\BaseModel;
  * Class IPRestriction
  * @package Drivezy\LaravelAccessManager\Models
  */
-class IPRestriction extends BaseModel {
+class IPRestriction extends BaseModel
+{
     /**
      * @var string
      */
@@ -18,7 +19,8 @@ class IPRestriction extends BaseModel {
     /**
      * Override the observer against the model
      */
-    public static function boot () {
+    public static function boot ()
+    {
         parent::boot();
         self::observe(new IPRestrictionObserver());
     }

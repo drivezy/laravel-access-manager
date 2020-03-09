@@ -2,40 +2,44 @@
 
 namespace Drivezy\LaravelAccessManager\Models;
 
-use Drivezy\LaravelAccessManager\AccessManager;
 use Drivezy\LaravelAccessManager\Observers\UserGroupMemberObserver;
 use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class UserGroupMember
  * @package Drivezy\LaravelAccessManager\Models
  */
-class UserGroupMember extends BaseModel {
+class UserGroupMember extends BaseModel
+{
     /**
      * @var string
      */
     protected $table = 'dz_user_group_members';
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     *
      */
-    public function user () {
+    public static function boot ()
+    {
+        parent::boot();
+        self::observe(new UserGroupMemberObserver());
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function user ()
+    {
         return $this->belongsTo(LaravelUtility::getUserModelFullQualifiedName());
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function user_group () {
+    public function user_group ()
+    {
         return $this->belongsTo(UserGroup::class);
-    }
-
-    /**
-     *
-     */
-    public static function boot () {
-        parent::boot();
-        self::observe(new UserGroupMemberObserver());
     }
 }

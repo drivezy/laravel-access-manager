@@ -9,31 +9,35 @@ use Drivezy\LaravelUtility\Models\BaseModel;
  * Class Route
  * @package Drivezy\LaravelAccessManager\Models
  */
-class Route extends BaseModel {
+class Route extends BaseModel
+{
     /**
      * @var string
      */
     protected $table = 'dz_routes';
 
     /**
+     *
+     */
+    public static function boot ()
+    {
+        parent::boot();
+        self::observe(new RouteObserver());
+    }
+
+    /**
      * @return $this
      */
-    public function roles () {
+    public function roles ()
+    {
         return $this->hasMany(RoleAssignment::class, 'source_id')->where('source_type', md5(self::class));
     }
 
     /**
      * @return $this
      */
-    public function permissions () {
+    public function permissions ()
+    {
         return $this->hasMany(PermissionAssignment::class, 'source_id')->where('source_type', md5(self::class));
-    }
-
-    /**
-     *
-     */
-    public static function boot () {
-        parent::boot();
-        self::observe(new RouteObserver());
     }
 }

@@ -9,7 +9,8 @@ use Drivezy\LaravelRecordManager\Controllers\RecordController;
  * Class IPRestrictionController
  * @package Drivezy\LaravelAccessManager\Controllers
  */
-class IPRestrictionController extends RecordController {
+class IPRestrictionController extends RecordController
+{
     /**
      * @var string
      */

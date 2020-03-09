@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Response;
  * Class AccessManager
  * @package Drivezy\LaravelAccessManager
  */
-class AccessManager {
+class AccessManager
+{
     /**
      * @var string
      */
@@ -36,7 +37,8 @@ class AccessManager {
      * @param null $userId
      * @return bool
      */
-    public static function hasRole ($role, $userId = null) {
+    public static function hasRole ($role, $userId = null)
+    {
         $userObject = self::getUserObject($userId);
 
         //super user should always get access to all the resources in the system
@@ -64,7 +66,8 @@ class AccessManager {
      * @param $userId
      * @return bool
      */
-    public static function hasAbsoluteRole ($role, $userId = null) {
+    public static function hasAbsoluteRole ($role, $userId = null)
+    {
         $userObject = self::getUserObject($userId);
 
         //check if passed role is ids
@@ -86,7 +89,8 @@ class AccessManager {
      * @param null $userId
      * @return bool
      */
-    public static function hasPermission ($permission, $userId = null) {
+    public static function hasPermission ($permission, $userId = null)
+    {
         $userObject = self::getUserObject($userId);
 
         //super user should always get access to all the resources in the system
@@ -111,7 +115,8 @@ class AccessManager {
      * @param null $userId
      * @return bool
      */
-    public static function hasAbsolutePermission ($permission, $userId = null) {
+    public static function hasAbsolutePermission ($permission, $userId = null)
+    {
         $userObject = self::getUserObject($userId);
 
         if ( is_numeric($permission) ) {
@@ -129,7 +134,8 @@ class AccessManager {
      * @param null $id
      * @return array|mixed
      */
-    public static function getUserObject ($id = null) {
+    public static function getUserObject ($id = null)
+    {
         $id = $id ? : Auth::id();
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
 
@@ -163,7 +169,8 @@ class AccessManager {
      * @param null $id
      * @return object
      */
-    public static function setUserObject ($id = null) {
+    public static function setUserObject ($id = null)
+    {
         $id = $id ? : Auth::id();
         $roles = $roleIdentifiers = $permissions = $permissionIdentifiers = [];
 
@@ -220,14 +227,16 @@ class AccessManager {
     /**
      * @return mixed
      */
-    public static function unauthorizedAccess () {
+    public static function unauthorizedAccess ()
+    {
         return Response::json(['success' => false, 'response' => 'Insufficient Privileges'], 403);
     }
 
     /**
      * @return bool|\Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public static function getUserSessionDetails () {
+    public static function getUserSessionDetails ()
+    {
         if ( !Auth::check() ) return false;
 
         $user = Auth::user();
@@ -244,7 +253,8 @@ class AccessManager {
      * @param $token
      * @return bool
      */
-    public static function verifyTimeBasedUserToken ($token) {
+    public static function verifyTimeBasedUserToken ($token)
+    {
         try {
             $obj = explode(':', Crypt::decrypt($token));
             if ( $obj[2] - strtotime('now') > 0 ) {
@@ -260,7 +270,8 @@ class AccessManager {
      * @param $user
      * @return mixed
      */
-    public static function generateTimeBasedUserToken ($user = null) {
+    public static function generateTimeBasedUserToken ($user = null)
+    {
         $user = $user ? : Auth::user();
 
         $string = $user->id . ':' . $user->email . ':' . strtotime("+1 day");

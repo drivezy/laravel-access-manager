@@ -4,6 +4,7 @@ namespace Drivezy\LaravelAccessManager\Models;
 
 use Drivezy\LaravelAccessManager\Observers\RoleObserver;
 use Drivezy\LaravelUtility\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Role
@@ -17,7 +18,16 @@ class Role extends BaseModel
     protected $table = 'dz_roles';
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Load the observer rule against the model
+     */
+    public static function boot ()
+    {
+        parent::boot();
+        self::observe(new RoleObserver());
+    }
+
+    /**
+     * @return HasMany
      */
     public function ip_restrictions ()
     {
@@ -25,20 +35,11 @@ class Role extends BaseModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function role_assignments ()
     {
         return $this->hasMany(RoleAssignment::class);
-    }
-
-    /**
-     * Load the observer rule against the model
-     */
-    public static function boot ()
-    {
-        parent::boot();
-        self::observe(new RoleObserver());
     }
 
 }

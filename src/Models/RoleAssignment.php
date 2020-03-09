@@ -4,6 +4,7 @@ namespace Drivezy\LaravelAccessManager\Models;
 
 use Drivezy\LaravelAccessManager\Observers\RoleAssignmentObserver;
 use Drivezy\LaravelUtility\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class RoleAssignment
@@ -18,7 +19,16 @@ class RoleAssignment extends BaseModel
     protected $table = 'dz_role_assignments';
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     *
+     */
+    public static function boot ()
+    {
+        parent::boot();
+        self::observe(new RoleAssignmentObserver());
+    }
+
+    /**
+     * @return BelongsTo
      */
     public function role ()
     {
@@ -31,15 +41,6 @@ class RoleAssignment extends BaseModel
     public function user_group ()
     {
         return $this->belongsTo(UserGroup::class, 'target_id')->where('source_type', md5(self::class));
-    }
-
-    /**
-     *
-     */
-    public static function boot ()
-    {
-        parent::boot();
-        self::observe(new RoleAssignmentObserver());
     }
 
 }
