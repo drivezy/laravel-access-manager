@@ -9,7 +9,8 @@ use Drivezy\LaravelUtility\LaravelUtility;
  * Class InternalRouteMiddleware
  * @package Drivezy\LaravelAccessManager\Middleware
  */
-class InternalRouteMiddleware {
+class InternalRouteMiddleware
+{
     /**
      * Handle an incoming request.
      *
@@ -17,7 +18,8 @@ class InternalRouteMiddleware {
      * @param \Closure $next
      * @return mixed
      */
-    public function handle ($request, Closure $next) {
+    public function handle ($request, Closure $next)
+    {
         //get the integration key from the property
         $pkey = LaravelUtility::getProperty('internal.server.key');
         $hKey = $request->header('access-key');

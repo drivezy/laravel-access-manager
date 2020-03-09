@@ -8,7 +8,8 @@ use Drivezy\LaravelUtility\Observers\BaseObserver;
  * Class SocialIdentifierObserver
  * @package Drivezy\LaravelAccessManager\Observers
  */
-class SocialIdentifierObserver extends BaseObserver {
+class SocialIdentifierObserver extends BaseObserver
+{
     /**
      * @var array
      */

@@ -15,18 +15,18 @@ class CreateDzImpersonatingUsersTable extends Migration {
         Schema::create('dz_impersonating_users', function (Blueprint $table) {
             $userTable = LaravelUtility::getUserTable();
 
-            $table->bigIncrements('id');
+            $table->increments('id');
 
             $table->string('session_identifier');
 
-            $table->unsignedBigInteger('parent_user_id')->nullable();
-            $table->unsignedBigInteger('impersonating_user_id')->nullable();
+            $table->unsignedInteger('parent_user_id')->nullable();
+            $table->unsignedInteger('impersonating_user_id')->nullable();
 
             $table->dateTime('start_time')->nullable();
             $table->dateTime('end_time')->nullable();
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedInteger('created_by')->nullable();
+            $table->unsignedInteger('updated_by')->nullable();
 
             $table->foreign('parent_user_id')->references('id')->on($userTable);
             $table->foreign('impersonating_user_id')->references('id')->on($userTable);

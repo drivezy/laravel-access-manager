@@ -1,4 +1,5 @@
 <?php
+
 namespace Drivezy\LaravelAccessManager\Libraries;
 
 
@@ -12,8 +13,10 @@ use P2PApp\User;
  * Class SocialManager
  * @package Drivezy\LaravelAccessManager\Libraries
  */
-class SocialManager {
-    private static function findUserByIdentifier ($identifier, $source) {
+class SocialManager
+{
+    private static function findUserByIdentifier ($identifier, $source)
+    {
         $otherSocialIdentifier = SocialIdentifier::where('identifier', $identifier)
             ->where('source', $source)
             ->first();
@@ -34,7 +37,8 @@ class SocialManager {
      * @param $user
      * @return mixed
      */
-    public static function loginUser ($user) {
+    public static function loginUser ($user)
+    {
         Auth::loginUsingId($user->id, true);
         $user->last_login_time = DateUtil::getDateTime();
         $user->save();
@@ -47,7 +51,8 @@ class SocialManager {
      * @param $accessToken
      * @return mixed
      */
-    public static function getDataArrFromSource ($source, $accessToken) {
+    public static function getDataArrFromSource ($source, $accessToken)
+    {
         if ( $source == 'google' ) {
             $url = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' . $accessToken;
         } elseif ( $source == 'fb' ) {
@@ -68,7 +73,8 @@ class SocialManager {
      * @param $source
      * @return SocialIdentifier
      */
-    private static function createSocialIdentifier ($userId, $identifier, $source) {
+    private static function createSocialIdentifier ($userId, $identifier, $source)
+    {
         $obj = new SocialIdentifier();
         $obj->user_id = $userId;
         $obj->identifier = $identifier;
@@ -84,7 +90,8 @@ class SocialManager {
      * @param $source
      * @return bool|mixed
      */
-    private static function findUserByEmail ($email, $identifier, $source) {
+    private static function findUserByEmail ($email, $identifier, $source)
+    {
         $user = User::whereNotNull('email')->where('email', $email)->first();
         if ( !$user ) {
             return false;
@@ -101,7 +108,8 @@ class SocialManager {
      * @param $source
      * @return bool|mixed
      */
-    public static function getUser ($data, $source) {
+    public static function getUser ($data, $source)
+    {
         $user = self::findUserByIdentifier($data->id, $source);
         if ( $user )
             return $user;
@@ -119,7 +127,8 @@ class SocialManager {
      * @param $lastName
      * @return string
      */
-    public static function getDisplayName ($firstName, $lastName) {
+    public static function getDisplayName ($firstName, $lastName)
+    {
         if ( $firstName && !$lastName )
             $name = $firstName;
         elseif ( !$firstName && $lastName )

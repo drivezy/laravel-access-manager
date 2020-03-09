@@ -5,18 +5,21 @@ namespace Drivezy\LaravelAccessManager;
 use Drivezy\LaravelAccessManager\Models\ImpersonatingUser;
 use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Library\DateUtil;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 /**
  * Class ImpersonationManager
  * @package Drivezy\LaravelAccessManager
  */
-class ImpersonationManager {
+class ImpersonationManager
+{
     /**
      * @param $userId
-     * @return bool|\Illuminate\Http\JsonResponse
+     * @return bool|JsonResponse
      */
-    public static function impersonateUser ($userId) {
+    public static function impersonateUser ($userId)
+    {
         if ( !Auth::check() ) return false;
 
         $parentUser = Auth::user();
@@ -37,7 +40,8 @@ class ImpersonationManager {
     /**
      * @return bool
      */
-    public static function deImpersonateUser () {
+    public static function deImpersonateUser ()
+    {
         if ( !Auth::check() ) return false;
 
         //check if the user is impersonating
@@ -60,7 +64,8 @@ class ImpersonationManager {
     /**
      * @return array|mixed
      */
-    public static function getImpersonatingUserSession () {
+    public static function getImpersonatingUserSession ()
+    {
         if ( !Auth::check() ) return [];
 
         $record = ImpersonatingUser::active()
@@ -79,7 +84,8 @@ class ImpersonationManager {
      * get the actual user who is logged into the system
      * @return array
      */
-    public static function getActualLoggedUser () {
+    public static function getActualLoggedUser ()
+    {
         if ( !Auth::check() ) return [];
 
         $record = ImpersonatingUser::active()

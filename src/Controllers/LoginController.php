@@ -11,12 +11,14 @@ use Illuminate\Support\Facades\Auth;
  * Class LoginController
  * @package Drivezy\LaravelAccessManager\Controllers
  */
-class LoginController extends Controller {
+class LoginController extends Controller
+{
 
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getUserSessionDetails () {
+    public function getUserSessionDetails ()
+    {
         if ( !Auth::check() )
             return failed_response('Invalid Session');
 

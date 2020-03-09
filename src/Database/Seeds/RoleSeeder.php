@@ -4,20 +4,22 @@ namespace Drivezy\LaravelAccessManager\Database\Seeds;
 
 use Drivezy\LaravelAccessManager\Models\Role;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
-use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Database\Seeds\BaseSeeder;
+use Drivezy\LaravelUtility\LaravelUtility;
 
 /**
  * Class RoleSeeder
  * @package Drivezy\LaravelAccessManager\Database\Seeds
  */
-class RoleSeeder extends BaseSeeder {
+class RoleSeeder extends BaseSeeder
+{
     /**
      * Run the database seeds.
      *
      * @return void
      */
-    public function run () {
+    public function run ()
+    {
         Role::create([
             'name'        => 'Super Admin',
             'identifier'  => 'super-admin',
