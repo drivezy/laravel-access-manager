@@ -3,6 +3,8 @@
 namespace Drivezy\LaravelAccessManager;
 
 use Drivezy\LaravelAccessManager\Models\Route;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -12,7 +14,8 @@ use Symfony\Component\HttpFoundation\IpUtils;
  * Class RouteManager
  * @package Drivezy\LaravelAccessManager
  */
-class RouteManager {
+class RouteManager
+{
     /**
      * @var string
      */
@@ -22,7 +25,8 @@ class RouteManager {
      * @param Request $request
      * @return bool
      */
-    public static function validateRouteAccess (Request $request) {
+    public static function validateRouteAccess (Request $request)
+    {
         //check all the request headers for authentication mechanism
         self::checkRequestHeaders($request);
 
@@ -42,9 +46,10 @@ class RouteManager {
 
     /**
      * @param Request $request
-     * @return \Illuminate\Contracts\Auth\Authenticatable|void
+     * @return Authenticatable|void
      */
-    private static function checkRequestHeaders (Request $request) {
+    private static function checkRequestHeaders (Request $request)
+    {
         if ( Auth::check() ) return;
 
         if ( $request->hasHeader('access_token') ) {
@@ -66,31 +71,11 @@ class RouteManager {
     }
 
     /**
-     * Added support to add all routes defined in the system
-     */
-    public static function logAllRoutes () {
-        $routes = \Illuminate\Support\Facades\Route::getRoutes();
-        foreach ( $routes as $route ) {
-            $url = '/' . preg_replace('/\/{.*?\}|\s*/', '', $route->uri);
-            $hash = md5($route->methods[0] . '-' . $url);
-
-            //create record only when its a new record
-            $record = Route::where('route_hash', $hash)->first();
-            if ( $record ) continue;
-
-            Route::create([
-                'uri'        => $url,
-                'method'     => $route->methods[0],
-                'route_hash' => $hash,
-            ]);
-        }
-    }
-
-    /**
      * @param $hash
-     * @return bool|\Illuminate\Database\Eloquent\Model|null|object|static
+     * @return bool|Model|null|object|static
      */
-    private static function getRouteDetails ($hash) {
+    private static function getRouteDetails ($hash)
+    {
         $route = Cache::get(self::$identifier . $hash, false);
         if ( $route )
             return $route;
@@ -106,10 +91,34 @@ class RouteManager {
     }
 
     /**
+     * @return bool
+     */
+    public static function isIPAllowed ()
+    {
+        $userObject = AccessManager::getUserObject();
+
+        //if no restriction then allow the record
+        if ( !sizeof($userObject->restricted_ips) ) return true;
+
+        //get the ip of the request
+        $headers = getallheaders();
+        $ip = isset($headers['X-Forwarded-For']) ? $headers['X-Forwarded-For'] : '127.0.0.1';
+
+        //see if user ip falls within a given cidr
+        foreach ( $userObject->restricted_ips as $item ) {
+            if ( IpUtils::checkIp4($ip, $item) )
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @param $route
      * @return bool
      */
-    private static function isRouteAllowed ($route) {
+    private static function isRouteAllowed ($route)
+    {
         $requiredRoles = $requiredPermissions = [];
 
         //if no permission or role is setup for the system, then authorize the request
@@ -133,26 +142,25 @@ class RouteManager {
         return false;
     }
 
-
     /**
-     * @return bool
+     * Added support to add all routes defined in the system
      */
-    public static function isIPAllowed () {
-        $userObject = AccessManager::getUserObject();
+    public static function logAllRoutes ()
+    {
+        $routes = \Illuminate\Support\Facades\Route::getRoutes();
+        foreach ( $routes as $route ) {
+            $url = '/' . preg_replace('/\/{.*?\}|\s*/', '', $route->uri);
+            $hash = md5($route->methods[0] . '-' . $url);
 
-        //if no restriction then allow the record
-        if ( !sizeof($userObject->restricted_ips) ) return true;
+            //create record only when its a new record
+            $record = Route::where('route_hash', $hash)->first();
+            if ( $record ) continue;
 
-        //get the ip of the request
-        $headers = getallheaders();
-        $ip = isset($headers['X-Forwarded-For']) ? $headers['X-Forwarded-For'] : '127.0.0.1';
-
-        //see if user ip falls within a given cidr
-        foreach ( $userObject->restricted_ips as $item ) {
-            if ( IpUtils::checkIp4($ip, $item) )
-                return true;
+            Route::create([
+                'uri'        => $url,
+                'method'     => $route->methods[0],
+                'route_hash' => $hash,
+            ]);
         }
-
-        return false;
     }
 }

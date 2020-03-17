@@ -6,13 +6,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDzUserGroupMembersTable extends Migration {
+class CreateDzUserGroupMembersTable extends Migration
+{
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up () {
+    public function up ()
+    {
         Schema::create('dz_user_group_members', function (Blueprint $table) {
             $userTable = LaravelUtility::getUserTable();
             $groupTable = ( new UserGroup() )->getTable();
@@ -41,7 +43,8 @@ class CreateDzUserGroupMembersTable extends Migration {
      *
      * @return void
      */
-    public function down () {
+    public function down ()
+    {
         Schema::dropIfExists('dz_user_group_members');
     }
 }
