@@ -6,13 +6,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDzPermissionAssignmentsTable extends Migration {
+class CreateDzPermissionAssignmentsTable extends Migration
+{
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up () {
+    public function up ()
+    {
         Schema::create('dz_permission_assignments', function (Blueprint $table) {
             $userTable = LaravelUtility::getUserTable();
             $permissionTable = ( new Permission() )->getTable();
@@ -48,7 +50,8 @@ class CreateDzPermissionAssignmentsTable extends Migration {
      *
      * @return void
      */
-    public function down () {
+    public function down ()
+    {
         Schema::dropIfExists('dz_permission_assignments');
     }
 }

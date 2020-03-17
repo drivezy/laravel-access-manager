@@ -1,17 +1,19 @@
 <?php
 
 use Drivezy\LaravelUtility\LaravelUtility;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class AddDzUserRestrictedIpsTable extends Migration {
+class AddDzUserRestrictedIpsTable extends Migration
+{
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up () {
+    public function up ()
+    {
         Schema::create('dz_ip_restrictions', function (Blueprint $table) {
             $userTable = LaravelUtility::getUserTable();
 
@@ -41,7 +43,8 @@ class AddDzUserRestrictedIpsTable extends Migration {
      *
      * @return void
      */
-    public function down () {
+    public function down ()
+    {
         Schema::dropIfExists('dz_ip_restrictions');
     }
 }

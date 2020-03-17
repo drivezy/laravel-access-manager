@@ -15,6 +15,46 @@ use P2PApp\User;
  */
 class SocialManager
 {
+    /**
+     * @param $source
+     * @param $accessToken
+     * @return mixed
+     */
+    public static function getDataArrFromSource ($source, $accessToken)
+    {
+        if ( $source == 'google' ) {
+            $url = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' . $accessToken;
+        } elseif ( $source == 'fb' ) {
+            $url = 'https://graph.facebook.com/me?fields=id,name,email,link,first_name,last_name,gender&access_token=' . $accessToken;
+        }
+
+        $arr = json_decode(RemoteRequest::getRequest($url));
+        if ( isset($arr->error->code) || !isset($arr->id) ) {
+            return false;
+        }
+
+        return $arr;
+    }
+
+    /**
+     * @param $data
+     * @param $source
+     * @return bool|mixed
+     */
+    public static function getUser ($data, $source)
+    {
+        $user = self::findUserByIdentifier($data->id, $source);
+        if ( $user )
+            return $user;
+
+        if ( !isset($data->email) )
+            return false;
+
+        $user = self::findUserByEmail($data->email, $data->id, $source);
+
+        return $user ? : false;
+    }
+
     private static function findUserByIdentifier ($identifier, $source)
     {
         $otherSocialIdentifier = SocialIdentifier::where('identifier', $identifier)
@@ -47,44 +87,6 @@ class SocialManager
     }
 
     /**
-     * @param $source
-     * @param $accessToken
-     * @return mixed
-     */
-    public static function getDataArrFromSource ($source, $accessToken)
-    {
-        if ( $source == 'google' ) {
-            $url = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' . $accessToken;
-        } elseif ( $source == 'fb' ) {
-            $url = 'https://graph.facebook.com/me?fields=id,name,email,link,first_name,last_name,gender&access_token=' . $accessToken;
-        }
-
-        $arr = json_decode(RemoteRequest::getRequest($url));
-        if ( isset($arr->error->code) || !isset($arr->id) ) {
-            return false;
-        }
-
-        return $arr;
-    }
-
-    /**
-     * @param $userId
-     * @param $identifier
-     * @param $source
-     * @return SocialIdentifier
-     */
-    private static function createSocialIdentifier ($userId, $identifier, $source)
-    {
-        $obj = new SocialIdentifier();
-        $obj->user_id = $userId;
-        $obj->identifier = $identifier;
-        $obj->source = $source;
-        $obj->save();
-
-        return $obj;
-    }
-
-    /**
      * @param $email
      * @param $identifier
      * @param $source
@@ -104,22 +106,20 @@ class SocialManager
     }
 
     /**
-     * @param $data
+     * @param $userId
+     * @param $identifier
      * @param $source
-     * @return bool|mixed
+     * @return SocialIdentifier
      */
-    public static function getUser ($data, $source)
+    private static function createSocialIdentifier ($userId, $identifier, $source)
     {
-        $user = self::findUserByIdentifier($data->id, $source);
-        if ( $user )
-            return $user;
+        $obj = new SocialIdentifier();
+        $obj->user_id = $userId;
+        $obj->identifier = $identifier;
+        $obj->source = $source;
+        $obj->save();
 
-        if ( !isset($data->email) )
-            return false;
-
-        $user = self::findUserByEmail($data->email, $data->id, $source);
-
-        return $user ? : false;
+        return $obj;
     }
 
     /**

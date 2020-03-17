@@ -8,6 +8,7 @@ use Drivezy\LaravelAccessManager\Models\Role;
 use Drivezy\LaravelAccessManager\Models\RoleAssignment;
 use Drivezy\LaravelUtility\LaravelUtility;
 use Drivezy\LaravelUtility\Library\DateUtil;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
@@ -56,76 +57,6 @@ class AccessManager
                 if ( in_array($role, $userObject->roleIdentifiers) ) return true;
             }
         }
-
-        return false;
-    }
-
-    /**
-     * validate if a given user has a particular role or not
-     * @param $role
-     * @param $userId
-     * @return bool
-     */
-    public static function hasAbsoluteRole ($role, $userId = null)
-    {
-        $userObject = self::getUserObject($userId);
-
-        //check if passed role is ids
-        if ( is_numeric($role) ) {
-            if ( in_array($role, $userObject->roles) ) return true;
-
-            return false;
-        }
-
-        if ( in_array($role, $userObject->roleIdentifiers) ) return true;
-
-        return false;
-    }
-
-    /**
-     * Validate if the user a particular permission
-     * global override for super admin user
-     * @param $permission
-     * @param null $userId
-     * @return bool
-     */
-    public static function hasPermission ($permission, $userId = null)
-    {
-        $userObject = self::getUserObject($userId);
-
-        //super user should always get access to all the resources in the system
-        if ( in_array(1, $userObject->roles) ) return true;
-
-        $permissions = is_array($permission) ? $permission : [$permission];
-
-        foreach ( $permissions as $permission ) {
-            if ( is_numeric($permission) ) {
-                if ( in_array($permission, $userObject->permissions) ) return true;
-            } elseif ( is_string($permission) ) {
-                if ( in_array($permission, $userObject->permissionIdentifiers) ) return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Validate if the user has a particular permission
-     * @param $permission
-     * @param null $userId
-     * @return bool
-     */
-    public static function hasAbsolutePermission ($permission, $userId = null)
-    {
-        $userObject = self::getUserObject($userId);
-
-        if ( is_numeric($permission) ) {
-            if ( in_array($permission, $userObject->permissions) ) return true;
-
-            return false;
-        }
-
-        if ( in_array($permission, $userObject->permissionIdentifiers) ) return true;
 
         return false;
     }
@@ -225,6 +156,76 @@ class AccessManager
     }
 
     /**
+     * validate if a given user has a particular role or not
+     * @param $role
+     * @param $userId
+     * @return bool
+     */
+    public static function hasAbsoluteRole ($role, $userId = null)
+    {
+        $userObject = self::getUserObject($userId);
+
+        //check if passed role is ids
+        if ( is_numeric($role) ) {
+            if ( in_array($role, $userObject->roles) ) return true;
+
+            return false;
+        }
+
+        if ( in_array($role, $userObject->roleIdentifiers) ) return true;
+
+        return false;
+    }
+
+    /**
+     * Validate if the user a particular permission
+     * global override for super admin user
+     * @param $permission
+     * @param null $userId
+     * @return bool
+     */
+    public static function hasPermission ($permission, $userId = null)
+    {
+        $userObject = self::getUserObject($userId);
+
+        //super user should always get access to all the resources in the system
+        if ( in_array(1, $userObject->roles) ) return true;
+
+        $permissions = is_array($permission) ? $permission : [$permission];
+
+        foreach ( $permissions as $permission ) {
+            if ( is_numeric($permission) ) {
+                if ( in_array($permission, $userObject->permissions) ) return true;
+            } elseif ( is_string($permission) ) {
+                if ( in_array($permission, $userObject->permissionIdentifiers) ) return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Validate if the user has a particular permission
+     * @param $permission
+     * @param null $userId
+     * @return bool
+     */
+    public static function hasAbsolutePermission ($permission, $userId = null)
+    {
+        $userObject = self::getUserObject($userId);
+
+        if ( is_numeric($permission) ) {
+            if ( in_array($permission, $userObject->permissions) ) return true;
+
+            return false;
+        }
+
+        if ( in_array($permission, $userObject->permissionIdentifiers) ) return true;
+
+        return false;
+    }
+
+    /**
      * @return mixed
      */
     public static function unauthorizedAccess ()
@@ -233,7 +234,7 @@ class AccessManager
     }
 
     /**
-     * @return bool|\Illuminate\Contracts\Auth\Authenticatable|null
+     * @return bool|Authenticatable|null
      */
     public static function getUserSessionDetails ()
     {
@@ -248,6 +249,18 @@ class AccessManager
         return $user;
     }
 
+    /**
+     * @param $user
+     * @return mixed
+     */
+    public static function generateTimeBasedUserToken ($user = null)
+    {
+        $user = $user ? : Auth::user();
+
+        $string = $user->id . ':' . $user->email . ':' . strtotime("+1 day");
+
+        return Crypt::encrypt($string);
+    }
 
     /**
      * @param $token
@@ -264,19 +277,6 @@ class AccessManager
         }
 
         return false;
-    }
-
-    /**
-     * @param $user
-     * @return mixed
-     */
-    public static function generateTimeBasedUserToken ($user = null)
-    {
-        $user = $user ? : Auth::user();
-
-        $string = $user->id . ':' . $user->email . ':' . strtotime("+1 day");
-
-        return Crypt::encrypt($string);
     }
 
 }
