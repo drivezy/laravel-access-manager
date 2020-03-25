@@ -13,7 +13,8 @@
     "require": {
         "doctrine/dbal": "^2.9",
         "drivezy/laravel-record-manager": "^1.0",
-        "drivezy/laravel-utility": "^1.0"
+        "drivezy/laravel-utility": "^1.0",
+        "laravel/socialite": "^4.3"
     },
     "autoload": {
         "psr-4": {
@@ -26,8 +27,5 @@
                 "Drivezy\\LaravelAccessManager\\LaravelAccessManagerServiceProvider"
             ]
         }
-    },
-    "require": {
-        "drivezy/laravel-utility": "1.*"
     }
 }
