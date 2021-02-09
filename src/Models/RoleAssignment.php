@@ -40,7 +40,7 @@ class RoleAssignment extends BaseModel
      */
     public function user_group ()
     {
-        return $this->belongsTo(UserGroup::class, 'target_id')->where('source_type', md5(self::class));
+        return $this->belongsTo(UserGroup::class, 'target_id');
     }
 
 }
